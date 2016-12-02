@@ -40,6 +40,7 @@ reddit = praw.Reddit(
                     user_agent    = config["uagent"] 
                 )
 
+reddit.login(config["username"], config["password"])
 def test_post(submission):
     if submission.id not in already_scanned:
         # Make sure we don't see it again
@@ -47,9 +48,9 @@ def test_post(submission):
         save_scanned(already_scanned)
 
         for brand in brands:
-            if brand in submission.title.lower():
+            if " {} ".format(brand) in submission.title.lower():
                 print("Possible match: {} [{}]".format(submission.title, brand))
-
+                reddit.submit("PotentialHailCorp", "[{}] :: {}".format(brand, submission.title), text=submission.url)
 
         
 while 1:
