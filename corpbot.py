@@ -9,7 +9,7 @@ with open("config.yaml", "r") as f:
 
 #Load brandlist
 with open("brandlist.txt", "r") as f:
-    brands = [x.lower() for x in f.read().split("\n") if x != ""]
+    brands = [x for x in f.read().split("\n") if x != ""]
 
 print("Loaded {} brands".format(len(brands)))
 
@@ -48,7 +48,7 @@ def test_post(submission):
         save_scanned(already_scanned)
 
         for brand in brands:
-            if " {} ".format(brand) in submission.title.lower():
+            if " {} ".format(brand) in submission.title:
                 print("Possible match: {} [{}]".format(submission.title, brand))
                 reddit.submit("PotentialHailCorp", "[{}] :: {}".format(brand, submission.title), text=submission.url)
 
