@@ -2,6 +2,7 @@
 import praw
 import pickle
 from pyaml import yaml
+import time
 
 #Load config
 with open("config.yaml", "r") as f:
@@ -10,6 +11,10 @@ with open("config.yaml", "r") as f:
 #Load brandlist
 with open("brandlist.txt", "r") as f:
     brands = [x for x in f.read().split("\n") if x != ""]
+
+#Defaults
+with open("defaults.txt", "r") as f:
+    defaults = [x for x in f.read().split("\n") if x != ""]
 
 print("Loaded {} brands".format(len(brands)))
 
@@ -50,12 +55,13 @@ def test_post(submission):
         for brand in brands:
             if " {} ".format(brand) in submission.title:
                 print("Possible match: {} [{}]".format(submission.title, brand))
-                reddit.submit("PotentialHailCorp", "[{}] :: {}".format(brand, submission.title), text=submission.url)
+                with open("ads-{}".format(time.strftime("%Y-%m-%d")), "a+") as f:
+                  f.write("[{} :: {}]({})\n\n".format(submission.subreddit, submission.title,submission.permalink))
 
         
 while 1:
     # Retrieve r/all
-    subreddit = reddit.get_subreddit("all")
-
-    for post in subreddit.get_new():
+    for sub in defaults:
+      subreddit = reddit.get_subreddit(sub)
+      for post in subreddit.get_new():
         test_post(post)
