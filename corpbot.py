@@ -3,6 +3,7 @@ import praw
 import pickle
 from pyaml import yaml
 import time
+import os
 
 #Load config
 with open("config.yaml", "r") as f:
@@ -45,6 +46,11 @@ reddit = praw.Reddit(
                     user_agent    = config["uagent"] 
                 )
 
+if not os.path.exists("ads-{}".format(time.strftime("%Y-%m-%d"))):
+  with open("ads-{}".format(time.strftime("%Y-%m-%d")), "a+") as f:
+    f.write("| Subreddit | Title | Brand |\n")
+    f.write("|:----------|-----|:-----:|\n")
+
 reddit.login(config["username"], config["password"])
 def test_post(submission):
     if submission.id not in already_scanned:
@@ -56,7 +62,7 @@ def test_post(submission):
             if " {} ".format(brand) in submission.title:
                 print("Possible match: {} [{}]".format(submission.title, brand))
                 with open("ads-{}".format(time.strftime("%Y-%m-%d")), "a+") as f:
-                  f.write("[{} :: {}]({})\n\n".format(submission.subreddit, submission.title,submission.permalink))
+                  f.write("| {} | [{}]({}) | {} |\n".format(submission.subreddit, submission.title,submission.permalink, brand))
 
         
 while 1:

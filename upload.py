@@ -19,6 +19,6 @@ reddit = praw.Reddit(
 reddit.login(config["username"], config["password"])
 
 with open("ads-{}".format(time.strftime("%Y-%m-%d")), "r") as f:
-  data = f.read().replace("\n", "\n\n")
+  data = f.read()
 
 reddit.submit("PotentialHailCorp", "Ads for {}".format(time.strftime("%Y-%m-%d")), text=data)
